@@ -14,6 +14,7 @@ export const createMonster = mutation({
     lng: v?.any(),
     name: v?.any(),
     imageUrl: v?.any(),
+    key: v?.string(),
   },
   handler: async (ctx, args) => {
     const newTaskId = await ctx.db.insert("monsters", {
@@ -21,6 +22,7 @@ export const createMonster = mutation({
       lng: args.lng,
       name: args.name,
       imageUrl: args.imageUrl,
+      key: args.key,
     });
     return newTaskId;
   },

@@ -21,9 +21,20 @@ const isMarkerNearby = (position) => {
   );
 };
 
+const makeKeyOutOfPosition = ({ lat, lng }) => {
+  const latRounded = Math.round(lat * 100) / 100000;
+  const lngRounded = Math.round(lng * 100) / 100000;
+
+  const key = `${latRounded}${lngRounded}`;
+  console.log({ key });
+  return key;
+};
+
 const locations = [];
 
-const ShowMonster = ({ name, imageUrl }) => {
+const ShowMonster = ({ position, name, imageUrl }) => {
+  const key = makeKeyOutOfPosition({ lat: position.lat, lng: position.lng });
+  console.log({ key });
   return (
     <div className="monster-profile">
       <h2>Monster {name} Spotted! </h2>
@@ -123,6 +134,7 @@ const App = () => {
       lng: markerPosition.lng,
       name,
       imageUrl,
+      key: makeKeyOutOfPosition(markerPosition.lat, markerPosition.lng),
     });
     setShowInfoWindow(false);
   };
@@ -136,19 +148,26 @@ const App = () => {
     setMarkerPosition(marker);
     locations.push({
       key: `${marker.lat}${marker.lng}`,
-      lat: marker.lat,
-      lng: marker.lng,
+      lat: marker?.lat,
+      lng: marker?.lng,
     });
   };
 
-  const markerPositionHasContent = () => {
-    const necessaryLocation = locations.find(
-      (location) =>
-        location.lat === markerPosition.lat &&
-        location.lng === markerPosition.lng
-    );
+  const markerPositionHasContent = (markerPosition) => {
+    const necessaryLocation = getMonsters.find((location) => {
+      const locationLat = Math.round(location.lat * 100) / 10000;
+      const locationLng = Math.round(location.lng * 100) / 10000;
+      const markerLat = Math.round(markerPosition.lat * 100) / 10000;
+      const markerLng = Math.round(markerPosition.lng * 100) / 10000;
 
-    return necessaryLocation?.content;
+      if (locationLat === markerLat && locationLng === markerLng) {
+        console.log("yes matched!!!!!");
+        return markerPosition;
+      }
+    });
+
+    console.log({ necessaryLocation });
+    return necessaryLocation;
   };
 
   return (
@@ -166,7 +185,7 @@ const App = () => {
         onClick={handleMapClick}
       >
         <PoiMarkers pois={getMonsters} />
-        {currentPosition.lat && <AdvancedMarker position={currentPosition} />}
+        {currentPosition?.lat && <AdvancedMarker position={currentPosition} />}
 
         {showInfoWindow && (
           <InfoWindow
@@ -175,8 +194,12 @@ const App = () => {
             onCloseClick={handleInfoWindowClose}
           >
             <div>
-              {someContent || showNewMonster ? (
-                <ShowMonster name={name} imageUrl={imageUrl} />
+              {markerPositionHasContent(markerPosition) ? (
+                <ShowMonster
+                  position={markerPosition}
+                  name={markerPositionHasContent(markerPosition)?.name}
+                  imageUrl={markerPositionHasContent(markerPosition)?.imageUrl}
+                />
               ) : (
                 <form onSubmit={handleFormSubmit}>
                   <div>
