@@ -40,3 +40,30 @@
 .read-the-docs {
   color: #888;
 }
+
+.monster-profile {
+  background-color: black;
+}
+
+/* .gm-style-iw,
+.gm-style-iw-c {
+  display: flex;
+  background-color: yellow;
+} */
+
+.info-window {
+  padding: 40px;
+  background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 24px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1.2em;
+}
