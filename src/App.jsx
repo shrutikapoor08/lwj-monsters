@@ -7,6 +7,8 @@ import {
   Pin,
   InfoWindow,
 } from "@vis.gl/react-google-maps";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../convex/_generated/api";
 
 import "./App.css";
 
@@ -31,16 +33,15 @@ const ShowMonster = ({ name, imageUrl }) => {
 };
 
 const PoiMarkers = (props) => {
-  console.log({ props });
   return (
     <>
       {props.pois?.map((poi) => (
         <AdvancedMarker
-          key={poi?.key}
+          key={poi?._id}
           position={{ lat: poi?.lat, lng: poi?.lng }}
         >
           <Pin
-            background={"#FBBC04"}
+            background={"#9CFF00"}
             glyphColor={"#000"}
             borderColor={"#000"}
           />
@@ -58,6 +59,12 @@ const App = () => {
   const [someContent, setSomeContent] = useState("");
   const [name, setName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [monsters, setMonsters] = useState([]);
+
+  const getMonsters = useQuery(api.monsters.get);
+  const createMonster = useMutation(api.monsters.createMonster);
+
+  const [showNewMonster, setShowNewMonster] = useState(false);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -67,6 +74,20 @@ const App = () => {
       });
     });
   }, []);
+
+  useEffect(() => {
+    if (getMonsters?.length > 0) {
+      alert("new monster spotted");
+      const newestMonster = getMonsters[0];
+      setImageUrl(newestMonster.imageUrl);
+      setName(newestMonster.name);
+      setSomeContent("");
+
+      setShowNewMonster(true);
+    }
+  }, [getMonsters?.length]);
+
+  console.log(getMonsters);
 
   const handleInfoWindowClose = () => {
     setShowInfoWindow(false);
@@ -97,7 +118,12 @@ const App = () => {
       });
     }
 
-    console.log({ necessaryLocation });
+    createMonster({
+      lat: markerPosition.lat,
+      lng: markerPosition.lng,
+      name,
+      imageUrl,
+    });
     setShowInfoWindow(false);
   };
 
@@ -139,7 +165,7 @@ const App = () => {
         mapId="DEMO_MAP_ID"
         onClick={handleMapClick}
       >
-        <PoiMarkers pois={locations} />
+        <PoiMarkers pois={getMonsters} />
         {currentPosition.lat && <AdvancedMarker position={currentPosition} />}
 
         {showInfoWindow && (
@@ -149,7 +175,7 @@ const App = () => {
             onCloseClick={handleInfoWindowClose}
           >
             <div>
-              {someContent ? (
+              {someContent || showNewMonster ? (
                 <ShowMonster name={name} imageUrl={imageUrl} />
               ) : (
                 <form onSubmit={handleFormSubmit}>

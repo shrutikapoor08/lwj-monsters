@@ -1,0 +1,30 @@
+[
+  {
+     "key":"operaHouse",
+     "location":{
+        "lat":-33.8567844,
+        "lng":151.213108
+     }
+  },
+  {
+     "key":"tarongaZoo",
+     "location":{
+        "lat":-33.8472767,
+        "lng":151.2188164
+     }
+  },
+  {
+     "key":"manlyBeach",
+     "location":{
+        "lat":-33.8209738,
+        "lng":151.2563253
+     }
+  },
+  {
+     "key":"hyderPark",
+     "location":{
+        "lat":-33.8690081,
+        "lng":151.2052393
+     }
+  }
+]
