@@ -43,6 +43,15 @@ const ShowMonster = ({ position, name, imageUrl }) => {
   );
 };
 
+const NewMonster = ({ imageUrl, name }) => {
+  return (
+    <div className="monster-profile">
+      <h2>Monster {name} Spotted! </h2>
+      <img src={imageUrl} alt={imageUrl} />
+    </div>
+  );
+};
+
 const PoiMarkers = (props) => {
   return (
     <>
@@ -93,8 +102,6 @@ const App = () => {
       setImageUrl(newestMonster.imageUrl);
       setName(newestMonster.name);
       setSomeContent("");
-
-      setShowNewMonster(true);
     }
   }, [getMonsters?.length]);
 
@@ -172,7 +179,7 @@ const App = () => {
 
   return (
     <APIProvider
-      apiKey={"AIzaSyBcixpd3Uc-ssuYJC4Q8HzovlMGpghyVYc"}
+      apiKey={}
       onLoad={() => console.log("Maps API has loaded.")}
     >
       <Map
